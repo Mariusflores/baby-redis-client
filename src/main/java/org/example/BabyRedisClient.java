@@ -73,7 +73,7 @@ public class BabyRedisClient {
         return read();
     }
 
-    private void send(String command){
+    public void send(String command){
         out.println(command);
     }
     private String read(){

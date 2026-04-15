@@ -4,7 +4,7 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.example</groupId>
+  <groupId>io.babyredis</groupId>
   <artifactId>baby-redis-client</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>

@@ -28,53 +28,52 @@ public class BabyRedisClient {
     }
 
     public String set(String key, String value){
-        send(String.format("SET %s %s", key, value));
-        return read();
+        return send(String.format("SET %s %s", key, value));
+
     }
     public String get(String key){
 
-        send(String.format("GET %s", key));
-        return read();
+        return send(String.format("GET %s", key));
+
     }
     public String delete(String key){
-        send(String.format("DELETE %s", key));
-        return read();
+        return send(String.format("DELETE %s", key));
+
 
     }
     public String sAdd(String key, String... values){
         String args = String.join(" ", values);
-        send(String.format("SADD %s %s", key, args));
-        return read();
+        return send(String.format("SADD %s %s", key, args));
+
 
     }
     public String sRem(String key, String... values){
         String args = String.join(" ", values);
-        send(String.format("SREM %s %s", key, args));
-        return read();
+        return send(String.format("SREM %s %s", key, args));
+
 
     }
     public String sIsMember(String key, String value){
-        send(String.format("SISMEMBER %s %s", key, value));
-        return read();
-    }
-    public String sMembers(String key){
-        send(String.format("SMEMBERS %s", key));
-        return read();
+        return send(String.format("SISMEMBER %s %s", key, value));
 
     }
-    public String expire(String key, String seconds){
-        send(String.format("EXPIRE %s %s", key, seconds));
-        return read();
+    public String sMembers(String key){
+        return send(String.format("SMEMBERS %s", key));
+
+
+    }
+    public String expire(String key, int seconds){
+        return send(String.format("EXPIRE %s %d", key, seconds));
+
 
     }
     public String ttl(String key){
-        send(String.format("TTL %s", key));
-
-        return read();
+        return send(String.format("TTL %s", key));
     }
 
-    public void send(String command){
+    public String send(String command){
         out.println(command);
+        return read();
     }
     private String read(){
         try {

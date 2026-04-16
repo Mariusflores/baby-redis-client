@@ -1,5 +1,6 @@
 package io.babyredis;
 
+// TODO: Move to io.babyredis.client package for consistency
 
 import java.io.*;
 import java.net.Socket;
@@ -22,6 +23,7 @@ public class BabyRedisClient {
      * @param host The hostname or IP address of the Redis server.
      * @param port The port number of the Redis server.
      */
+    // TODO: Implement AutoCloseable for try-with-resources support
     public BabyRedisClient(String host, int port) {
         try {
             s = new Socket(host, port);
@@ -32,11 +34,13 @@ public class BabyRedisClient {
                     new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8)
             );
         } catch (IOException e) {
+            // TODO: Throw dedicated BabyRedisException instead of RuntimeException
             throw new RuntimeException(e);
         }
 
 
     }
+    // TODO: Return typed values (boolean for sIsMember, int for ttl, Set<String> for sMembers)
 
     /**
      * Sends a SET command to the Redis server to store a value associated with a key.
@@ -167,6 +171,7 @@ public class BabyRedisClient {
         try {
             return reader.readLine();
         } catch (IOException e) {
+            // TODO: Throw dedicated BabyRedisException instead of RuntimeException
             throw new RuntimeException(e);
         }
     }
@@ -178,6 +183,7 @@ public class BabyRedisClient {
             out.close();
             reader.close();
         } catch (IOException e) {
+            // TODO: Throw dedicated BabyRedisException instead of RuntimeException
             throw new RuntimeException(e);
         }
 

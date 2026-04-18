@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
  * The client uses a socket connection to communicate with the server and handles the input/output streams for sending commands and reading responses.
  */
 
-public class BabyRedisClient {
+public class BabyRedisClient implements AutoCloseable{
     private Socket s;
     private PrintWriter out;
     private BufferedReader reader;
@@ -23,7 +23,6 @@ public class BabyRedisClient {
      * @param host The hostname or IP address of the Redis server.
      * @param port The port number of the Redis server.
      */
-    // TODO: Implement AutoCloseable for try-with-resources support
     public BabyRedisClient(String host, int port) {
         try {
             s = new Socket(host, port);
@@ -177,6 +176,7 @@ public class BabyRedisClient {
     }
 
     // Closes the connection to the Redis server and releases any resources associated with the client. This method should be called when the client is no longer needed to ensure that the socket and streams are properly closed.
+    @Override
     public void close() {
         try {
             s.close();

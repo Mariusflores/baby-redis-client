@@ -1,6 +1,6 @@
-package io.babyredis;
+package io.babyredis.client;
 
-// TODO: Move to io.babyredis.client package for consistency
+import io.babyredis.error.BabyRedisException;
 
 import java.io.*;
 import java.net.Socket;
@@ -33,8 +33,7 @@ public class BabyRedisClient implements AutoCloseable{
                     new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8)
             );
         } catch (IOException e) {
-            // TODO: Throw dedicated BabyRedisException instead of RuntimeException
-            throw new RuntimeException(e);
+            throw new BabyRedisException("Failed to connect to " + port + ":" + port);
         }
 
 
@@ -170,8 +169,7 @@ public class BabyRedisClient implements AutoCloseable{
         try {
             return reader.readLine();
         } catch (IOException e) {
-            // TODO: Throw dedicated BabyRedisException instead of RuntimeException
-            throw new RuntimeException(e);
+            throw new BabyRedisException("Error reading server response");
         }
     }
 
@@ -183,8 +181,7 @@ public class BabyRedisClient implements AutoCloseable{
             out.close();
             s.close();
         } catch (IOException e) {
-            // TODO: Throw dedicated BabyRedisException instead of RuntimeException
-            throw new RuntimeException(e);
+            throw new BabyRedisException("Error closing connection");
         }
 
     }

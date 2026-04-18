@@ -33,7 +33,7 @@ Then add it as a dependency in your project:
 ## Usage
 
 ```java
-import io.babyredis.BabyRedisClient;
+import io.babyredis.client.BabyRedisClient;
 
 public class Example {
     public static void main(String[] args) {

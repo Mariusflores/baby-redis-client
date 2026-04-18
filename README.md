@@ -82,3 +82,4 @@ All methods return the server's response as a `String`.
 ## Related
 
 - [baby-redis](https://github.com/mariusflores/baby-redis) — the server this library talks to
+- [baby-redis-cli](https://github.com/mariusflores/baby-redis-cli) — Devtool using this library to connect to server and perform command line operations

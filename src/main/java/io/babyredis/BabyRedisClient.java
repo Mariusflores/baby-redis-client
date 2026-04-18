@@ -179,9 +179,9 @@ public class BabyRedisClient implements AutoCloseable{
     @Override
     public void close() {
         try {
-            s.close();
-            out.close();
             reader.close();
+            out.close();
+            s.close();
         } catch (IOException e) {
             // TODO: Throw dedicated BabyRedisException instead of RuntimeException
             throw new RuntimeException(e);

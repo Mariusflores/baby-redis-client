@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
  * The client uses a socket connection to communicate with the server and handles the input/output streams for sending commands and reading responses.
  */
 
-public class BabyRedisClient implements AutoCloseable{
+public class BabyRedisClient implements AutoCloseable {
     private Socket s;
     private PrintWriter out;
     private BufferedReader reader;
@@ -49,7 +49,6 @@ public class BabyRedisClient implements AutoCloseable{
      */
     public String set(String key, String value) {
         return send(String.format("SET %s %s", key, value));
-
     }
 
     /**

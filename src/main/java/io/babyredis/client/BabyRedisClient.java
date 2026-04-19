@@ -13,9 +13,9 @@ import java.nio.charset.StandardCharsets;
  */
 
 public class BabyRedisClient implements AutoCloseable {
-    private Socket s;
-    private PrintWriter out;
-    private BufferedReader reader;
+    private final Socket s;
+    private final PrintWriter out;
+    private final BufferedReader reader;
 
     /**
      * Creates a new BabyRedisClient instance and connects to the Redis server.
@@ -33,7 +33,7 @@ public class BabyRedisClient implements AutoCloseable {
                     new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8)
             );
         } catch (IOException e) {
-            throw new BabyRedisException("Failed to connect to " + port + ":" + port);
+            throw new BabyRedisException("Failed to connect to " + host + ":" + port);
         }
 
 
@@ -148,6 +148,10 @@ public class BabyRedisClient implements AutoCloseable {
      */
     public String ttl(String key) {
         return send(String.format("TTL %s", key));
+    }
+
+    public String ping() {
+        return send("PING");
     }
 
     /**

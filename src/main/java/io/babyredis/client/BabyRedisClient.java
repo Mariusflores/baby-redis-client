@@ -1,10 +1,12 @@
 package io.babyredis.client;
 
 import io.babyredis.error.BabyRedisException;
+import io.babyredis.protocol.RespDecoder;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 /**
  * A simple Redis client that connects to a Baby Redis server and sends commands.
@@ -38,7 +40,6 @@ public class BabyRedisClient implements AutoCloseable {
 
 
     }
-    // TODO: Return typed values (boolean for sIsMember, int for ttl, Set<String> for sMembers)
 
     /**
      * Sends a SET command to the Redis server to store a value associated with a key.
@@ -48,19 +49,30 @@ public class BabyRedisClient implements AutoCloseable {
      * @return OK if the command was successful, or an error message if the command failed
      */
     public String set(String key, String value) {
-        return send(String.format("SET %s %s", key, value));
+
+        send(String.format("SET %s %s", key, value));
+        try {
+            return RespDecoder.decodeString(reader);
+        } catch (IOException e) {
+            throw new BabyRedisException("Error reading server response");
+        }
     }
 
     /**
      * Sends a GET command to the Redis server to retrieve the value associated with a key.
      *
      * @param key key to retrieve the value for
-     * @return the value associated with the key, or an error message if the key does not exist
+     * @return the value associated with the key
+     * @throws BabyRedisException if the key does not exist
      */
     public String get(String key) {
 
-        return send(String.format("GET %s", key));
-
+        send(String.format("GET %s", key));
+        try {
+            return RespDecoder.decodeBulkString(reader);
+        } catch (IOException e) {
+            throw new BabyRedisException("Error reading server response");
+        }
     }
 
     /**
@@ -70,9 +82,13 @@ public class BabyRedisClient implements AutoCloseable {
      * @return OK if the command was successful, or an error message if the key does not exist
      */
     public String delete(String key) {
-        return send(String.format("DELETE %s", key));
+        send(String.format("DELETE %s", key));
 
-
+        try {
+            return RespDecoder.decodeString(reader);
+        } catch (IOException e) {
+            throw new BabyRedisException("Error reading server response");
+        }
     }
 
     /**
@@ -84,9 +100,13 @@ public class BabyRedisClient implements AutoCloseable {
      */
     public String sAdd(String key, String... values) {
         String args = String.join(" ", values);
-        return send(String.format("SADD %s %s", key, args));
+        send(String.format("SADD %s %s", key, args));
 
-
+        try {
+            return RespDecoder.decodeString(reader);
+        } catch (IOException e) {
+            throw new BabyRedisException("Error reading server response");
+        }
     }
 
     /**
@@ -98,9 +118,13 @@ public class BabyRedisClient implements AutoCloseable {
      */
     public String sRem(String key, String... values) {
         String args = String.join(" ", values);
-        return send(String.format("SREM %s %s", key, args));
+        send(String.format("SREM %s %s", key, args));
 
-
+        try {
+            return RespDecoder.decodeString(reader);
+        } catch (IOException e) {
+            throw new BabyRedisException("Error reading server response");
+        }
     }
 
     /**
@@ -110,20 +134,29 @@ public class BabyRedisClient implements AutoCloseable {
      * @param value value to check for membership in the set
      * @return True if the value is a member of the set, false otherwise
      */
-    public String sIsMember(String key, String value) {
-        return send(String.format("SISMEMBER %s %s", key, value));
-
+    public boolean sIsMember(String key, String value) {
+        send(String.format("SISMEMBER %s %s", key, value));
+        try {
+            return RespDecoder.decodeInteger(reader) == 1;
+        } catch (IOException e) {
+            throw new BabyRedisException("Error reading server response");
+        }
     }
 
     /**
      * Sends a SMEMBERS command to the Redis server to retrieve all members of a set associated with a key.
      *
      * @param key key to which the set is associated
-     * @return a list of all members in the set, or an empty list if the set does not exist or is empty
+     * @return an array of all members in the set, or an empty array if the set does not exist or is empty
      */
-    public String sMembers(String key) {
-        return send(String.format("SMEMBERS %s", key));
+    public String[] sMembers(String key) {
+        send(String.format("SMEMBERS %s", key));
 
+        try {
+            return RespDecoder.decodeArray(reader);
+        } catch (IOException e) {
+            throw new BabyRedisException("Error reading server response");
+        }
 
     }
 
@@ -132,26 +165,43 @@ public class BabyRedisClient implements AutoCloseable {
      *
      * @param key     key to set the expiration on
      * @param seconds number of seconds until the key expires
-     * @return OK if the command was successful, or an error message if the command failed
+     * @return 1 if the timeout was set successfully
      */
-    public String expire(String key, int seconds) {
-        return send(String.format("EXPIRE %s %d", key, seconds));
+    public int expire(String key, int seconds) {
+        send(String.format("EXPIRE %s %d", key, seconds));
 
-
+        try {
+            return RespDecoder.decodeInteger(reader);
+        } catch (IOException e) {
+            throw new BabyRedisException("Error reading server response");
+        }
     }
 
     /**
      * Sends a TTL command to the Redis server to retrieve the remaining time to live of a key that has an expiration set.
      *
      * @param key key to check the TTL for
-     * @return the remaining time to live in seconds, or -1 if the key does not have an expiration, or -2 if the key does not exist
+     * @return the remaining time to live in seconds, or -1 if the key does not
+     * have an expiration, or -2 if the key does not exist
      */
-    public String ttl(String key) {
-        return send(String.format("TTL %s", key));
+    public int ttl(String key) {
+        send(String.format("TTL %s", key));
+
+        try {
+            return RespDecoder.decodeInteger(reader);
+        } catch (IOException e) {
+            throw new BabyRedisException("Error reading server response");
+        }
     }
 
     public String ping() {
-        return send("PING");
+        send("PING");
+
+        try {
+            return RespDecoder.decodeString(reader);
+        } catch (IOException e) {
+            throw new BabyRedisException("Error reading server response");
+        }
     }
 
     /**
@@ -160,17 +210,39 @@ public class BabyRedisClient implements AutoCloseable {
      * and read the response.
      *
      * @param command the command string to send to the server
-     * @return the response from the server
      */
-    public String send(String command) {
+    private void send(String command) {
         out.println(command);
-        return read();
     }
 
-    // Reads a line of response from the Redis server. This method is used internally by the send method to read the response after sending a command.
-    private String read() {
+    // Method for sending Raw strings for CLI
+    public String sendRaw(String command) {
+        send(command);
         try {
-            return reader.readLine();
+            String head = reader.readLine();
+            char prefix = head.charAt(0);
+
+            switch (prefix) {
+                case '+', ':' -> {
+                    return head.substring(1);
+                }
+                case '$' -> {
+                    return reader.readLine();
+                }
+                case '*' -> {
+                    int numItems = Integer.parseInt(head.substring(1));
+                    ArrayList<String> response = new ArrayList<>();
+                    for (int i = 0; i < numItems; i++) {
+                        response.add(RespDecoder.decodeBulkString(reader));
+                    }
+                    return response.toString();
+                }
+
+                default -> {
+                    return head;
+                }
+
+            }
         } catch (IOException e) {
             throw new BabyRedisException("Error reading server response");
         }

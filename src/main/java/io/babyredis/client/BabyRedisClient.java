@@ -48,6 +48,7 @@ public class BabyRedisClient implements AutoCloseable {
      * @return OK if the command was successful, or an error message if the command failed
      */
     public String set(String key, String value) {
+
         return send(String.format("SET %s %s", key, value));
     }
 

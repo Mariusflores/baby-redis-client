@@ -6,6 +6,7 @@ import io.babyredis.protocol.RespDecoder;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 /**
  * A simple Redis client that connects to a Baby Redis server and sends commands.
@@ -218,7 +219,30 @@ public class BabyRedisClient implements AutoCloseable {
     public String sendRaw(String command) {
         send(command);
         try {
-            return reader.readLine();
+            String head = reader.readLine();
+            char prefix = head.charAt(0);
+
+            switch (prefix) {
+                case '+', ':' -> {
+                    return head.substring(1);
+                }
+                case '$' -> {
+                    return reader.readLine();
+                }
+                case '*' -> {
+                    int numItems = Integer.parseInt(head.substring(1));
+                    ArrayList<String> response = new ArrayList<>();
+                    for (int i = 0; i < numItems; i++) {
+                        response.add(RespDecoder.decodeBulkString(reader));
+                    }
+                    return response.toString();
+                }
+
+                default -> {
+                    return head;
+                }
+
+            }
         } catch (IOException e) {
             throw new BabyRedisException("Error reading server response");
         }

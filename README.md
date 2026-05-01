@@ -1,9 +1,10 @@
 # Baby Redis Client
-A standalone Java library for connecting to and communicating with 
-[baby-redis](https://github.com/mariusflores/baby-redis) — a from-scratch 
+
+A standalone Java library for connecting to and communicating with
+[baby-redis](https://github.com/mariusflores/baby-redis) — a from-scratch
 Redis-inspired key-value store.
 
-Handles socket connections, request serialization, and response parsing 
+Handles socket connections, request serialization, and response parsing
 using baby-redis's custom wire protocol.
 
 ## Status
@@ -12,7 +13,11 @@ using baby-redis's custom wire protocol.
 
 ## Installation
 
-Not yet published to Maven Central. Build locally and install to your 
+### Prerequisites
+
+- [baby-redis-protocol](https://github.com/mariusflores/baby-redis-protocol) installed locally
+
+Not yet published to Maven Central. Build locally and install to your
 local Maven repository:
 
 ```bash
@@ -24,12 +29,12 @@ mvn clean install
 Then add it as a dependency in your project:
 
 ```xml
-
-    io.babyredis
-    baby-redis-client
-    0.1.0
+io.babyredis
+        baby-redis-client
+        0.1.0
 
 ```
+
 ## Usage
 
 ```java
@@ -53,26 +58,23 @@ public class Example {
 }
 ```
 
-
 ## API
 
-| Method | Description |
-|--------|-------------|
-| `BabyRedisClient(host, port)` | Connects to the server on construction |
-| `set(key, value)` | Store a string value |
-| `get(key)` | Retrieve a string value |
-| `delete(key)` | Delete a key |
-| `sAdd(key, values...)` | Add one or more members to a set |
-| `sRem(key, values...)` | Remove one or more members from a set |
-| `sIsMember(key, value)` | Check if a value is a member of the set |
-| `sMembers(key)` | Retrieve all members of the set |
-| `expire(key, seconds)` | Set a TTL on a key |
-| `ttl(key)` | Get remaining TTL for a key |
-| `send(command)` | Send a raw command string (for advanced use) |
-| `close()` | Close the connection and release resources |
-
-All methods return the server's response as a `String`.
-
+| Method                        | Return Type | Description                             |
+|-------------------------------|-------------|-----------------------------------------|
+| `BabyRedisClient(host, port)` |             | Connects to the server on construction  |
+| `set(key, value)`             | `String`    | Store a string value                    |
+| `get(key)`                    | `String`    | Retrieve a string value                 |
+| `delete(key)`                 | `String`    | Delete a key                            |
+| `sAdd(key, values...)`        | `String`    | Add one or more members to a set        |
+| `sRem(key, values...)`        | `String`    | Remove one or more members from a set   |
+| `sIsMember(key, value)`       | `boolean`   | Check if a value is a member of the set |
+| `sMembers(key)`               | `String[]`  | Retrieve all members of the set         |
+| `expire(key, seconds)`        | `int`       | Set a TTL on a key                      |
+| `ttl(key)`                    | `int`       | Get remaining TTL for a key             |
+| `ping()`                      | `String`    | Ping the server                         |
+| `sendRaw(command)`            | `String`    | Send a raw command string (for CLI use) |
+| `close()`                     |             | Close the connection                    |
 
 ## Requirements
 
@@ -82,4 +84,6 @@ All methods return the server's response as a `String`.
 ## Related
 
 - [baby-redis](https://github.com/mariusflores/baby-redis) — the server this library talks to
-- [baby-redis-cli](https://github.com/mariusflores/baby-redis-cli) — Devtool using this library to connect to server and perform command line operations
+- [baby-redis-cli](https://github.com/mariusflores/baby-redis-cli) — Devtool using this library to connect to server and
+  perform command line operations
+- [baby-redis-protocol](https://github.com/mariusflores/baby-redis-protocol) — shared RESP protocol library

@@ -223,7 +223,7 @@ public class BabyRedisClient implements AutoCloseable {
             char prefix = head.charAt(0);
 
             switch (prefix) {
-                case '+', ':' -> {
+                case '+', ':', '-' -> {
                     return head.substring(1);
                 }
                 case '$' -> {

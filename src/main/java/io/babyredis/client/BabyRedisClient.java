@@ -194,6 +194,46 @@ public class BabyRedisClient implements AutoCloseable {
         }
     }
 
+    /**
+     * Sends a KEYS command to the Redis server to retrieve all keys that match a given pattern.
+     * The pattern can include wildcards like * to match multiple keys.
+     * a single * will match all keys, while a prefix pattern like user:* will match all keys that start with "user:".
+     * @param the pattern to match keys against
+     * @return an array of keys that match the pattern, or an empty array if no keys match the pattern
+     */
+    public String[] keys(String pattern) {
+        send(String.format("KEYS %s", pattern));
+
+        try {
+            return RespDecoder.decodeArray(reader);
+        } catch (IOException e) {
+            throw new BabyRedisException("Error reading server response");
+        }
+
+    }
+
+    /**
+     * Sends a FLUSHDB command to the Redis server to delete all keys that match a given pattern.
+     * The pattern can include wildcards like * to match multiple keys. A single * will match all keys, while a prefix pattern like user:* will match all keys that start with "user:".
+     * Note that this command will permanently delete the matching keys and their associated values, so use it with caution.
+     * @param the pattern to match keys against for deletion
+     * @return OK if the command was successful, or an error message if the command failed
+     */
+    public String flushDb (String pattern){
+        send(String.format("FLUSHDB %s", pattern));
+
+        try {
+            return RespDecoder.decodeString(reader);
+        } catch (IOException e) {
+            throw new BabyRedisException("Error reading server response");
+        }
+    }
+
+    /**
+     * Sends a PING command to the Redis server to check if the server is responsive.
+     * @return PONG if the server is responsive, or an error message if the server is not responsive
+     */
+
     public String ping() {
         send("PING");
 

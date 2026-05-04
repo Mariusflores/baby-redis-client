@@ -5,7 +5,12 @@ A standalone Java library for connecting to and communicating with
 Redis-inspired key-value store.
 
 Handles socket connections, request serialization, and response parsing
-using baby-redis's custom wire protocol.
+using baby-redis's custom wire protocol and RESP decoding.
+
+## Recent Changes
+
+- **0.3.0**: Added `flush` and `keys` commands to the client API.
+- **0.2.0**: Added RESP decoding and specific return types for methods (e.g., `boolean`, `String[]`, `int`).
 
 ## Status
 
@@ -53,6 +58,8 @@ public class Example {
         client.expire("greeting", 60);
         System.out.println(client.ttl("greeting"));
 
+        System.out.println(client.keys("*")); // → [greeting, fruits]
+        client.flush(); // flushes all keys
         client.close();
     }
 }
@@ -72,6 +79,8 @@ public class Example {
 | `sMembers(key)`               | `String[]`  | Retrieve all members of the set         |
 | `expire(key, seconds)`        | `int`       | Set a TTL on a key                      |
 | `ttl(key)`                    | `int`       | Get remaining TTL for a key             |
+| `keys(pattern)`               | `String[]`  | List all keys matching a pattern        |
+| `flush()`                     | `String`    | Remove all keys from the database       |
 | `ping()`                      | `String`    | Ping the server                         |
 | `sendRaw(command)`            | `String`    | Send a raw command string (for CLI use) |
 | `close()`                     |             | Close the connection                    |

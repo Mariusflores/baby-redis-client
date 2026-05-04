@@ -198,7 +198,7 @@ public class BabyRedisClient implements AutoCloseable {
      * Sends a KEYS command to the Redis server to retrieve all keys that match a given pattern.
      * The pattern can include wildcards like * to match multiple keys.
      * a single * will match all keys, while a prefix pattern like user:* will match all keys that start with "user:".
-     * @param the pattern to match keys against
+     * @param pattern the pattern to match keys against
      * @return an array of keys that match the pattern, or an empty array if no keys match the pattern
      */
     public String[] keys(String pattern) {
@@ -216,7 +216,7 @@ public class BabyRedisClient implements AutoCloseable {
      * Sends a FLUSHDB command to the Redis server to delete all keys that match a given pattern.
      * The pattern can include wildcards like * to match multiple keys. A single * will match all keys, while a prefix pattern like user:* will match all keys that start with "user:".
      * Note that this command will permanently delete the matching keys and their associated values, so use it with caution.
-     * @param the pattern to match keys against for deletion
+     * @param pattern the pattern to match keys against for deletion
      * @return OK if the command was successful, or an error message if the command failed
      */
     public String flushDb (String pattern){
